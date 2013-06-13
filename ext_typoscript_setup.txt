@@ -1,0 +1,32 @@
+plugin.dd_googlesitemap_dmf {
+	# selector for your extension (same as GET selector=news)
+	news {
+
+		# uid is NECESSARY in the sqlSelect field
+		sqlMainTable = tx_news_domain_model_news
+
+		# if catList depends of column of sqlMainTable (Column name like city or country)
+		sqlCatColumn = 
+		
+		# if catList depends on sqlMMTable (Only works if uid_foreign and uid_local is in use)
+		sqlMMTable = tx_news_domain_model_news_category_mm
+		
+		# order of the XML output
+		sqlOrder = tstamp DESC
+		
+		# last modified timestamp column (inside of sqlMainTable)
+		sqlLastUpdated = tstamp
+		
+		# sql column of the title
+		sqlTitle = title
+
+		# sql column of keywords
+		sqlKeywords = keywords
+
+		# frequency
+		frequency = 
+
+		# typolink additionalParam (must belong to the uid of the sqlMainTable)
+		linkParams = tx_news_pi1[news]
+	}
+}
