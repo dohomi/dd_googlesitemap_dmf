@@ -16,8 +16,10 @@ class CrawlerCommandController extends CommandController {
 	 * This function crawls generated Sitemap.xml from dd_googlesitemap and re-crawles
 	 * the whole website links found in it.
 	 *
+	 * @param bool $clearAllCaches
+	 * @param bool $removeNcStaticfilecache Remove all files in staticfilecache
 	 */
-	public function crawlXmlCommand() {
+	public function crawlXmlCommand($clearAllCaches = FALSE) {
 
 		/** @var ConfigurationManager $configurationManager */
 		$configurationManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
@@ -40,12 +42,21 @@ class CrawlerCommandController extends CommandController {
 					exec("$makeFolder");
 				}
 
-				// clears all cache tables
-				$this->clearAllCaches();
+				if (is_dir(PATH_site . 'typo3temp/tx_staticfilecache') && !$clearAllCaches) {
+					$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/tx_staticfilecache/*';
+					exec("$clearTypo3Temp");
+				}
 
-				// remove all temp files
-				$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/*';
-				exec("$clearTypo3Temp");
+
+				// clear all caches
+				if ($clearAllCaches) {
+					// clears all cache tables
+					$this->clearAllCaches();
+
+					// remove all temp files
+					$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/*';
+					exec("$clearTypo3Temp");
+				}
 
 				foreach ($urls as $url) {
 
