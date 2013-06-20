@@ -58,16 +58,19 @@ class CrawlerCommandController extends CommandController {
 					exec("$clearTypo3Temp");
 				}
 
+				// remove wgetLog.txt
+				$removeWgetFile = 'rm ' . $pathToLogFile . 'wgetLog.txt';
+				exec("$removeWgetFile");
+
 				foreach ($urls as $url) {
 
 					// wget all sitemap urls
 					$http       = $url['ch']['loc'][0]['values'][0];
-					$wgetString = 'cd ' . $pathToLogFile . ' && rm wgetLog.txt && wget --no-cache --delete-after -a ' . $pathToLogFile . 'wgetLog.txt ' . $http;
+					$wgetString = 'cd ' . $pathToLogFile . ' && wget --no-cache --delete-after -a ' . $pathToLogFile . 'wgetLog.txt ' . $http;
 					exec("$wgetString");
 				}
 			}
 		}
-		return 'some-text';
 	}
 
 	/**
