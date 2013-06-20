@@ -29,4 +29,12 @@ plugin.dd_googlesitemap_dmf {
 		# typolink additionalParam (must belong to the uid of the sqlMainTable)
 		linkParams = tx_news_pi1[news]
 	}
+
+    # sitemap eID urls for the crawler
+	crawler {
+	    1 = http://stud.dmf.he-internet.de?eID=dd_googlesitemap
+
+	    # more than one sitemap
+	    # 2 =  http://nextsitemap.de?eID=dd_googlesitemap&more-configuration
+	}
 }
