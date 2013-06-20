@@ -67,6 +67,7 @@ class CrawlerCommandController extends CommandController {
 				}
 			}
 		}
+		return 'some-text';
 	}
 
 	/**
