@@ -71,6 +71,18 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 		$catMMList = (t3lib_div::_GP('catMMList')) ? t3lib_div::intExplode(',', t3lib_div::_GP('catMMList')) : t3lib_div::intExplode(',', $currentSetup['catMMList']);
 		$currentSetup['singlePid'] = (t3lib_div::_GP('singlePid')) ? intval(t3lib_div::_GP('singlePid')) : intval($currentSetup['singlePid']);
 
+		$currentSetup['languageUid'] = '';
+		if (!$currentSetup['disableLanguageCheck']) {
+			if (is_int($GLOBALS['TSFE']->sys_language_uid)) {
+				// set language through TSFE checkup
+				$currentSetup['languageUid'] = intval($GLOBALS['TSFE']->sys_language_uid);
+			}
+			if (t3lib_div::_GP('L')) {
+				// overwrites if L param is set
+				$currentSetup['languageUid'] = intval(t3lib_div::_GP('L'));
+			}
+		}
+
 		if (count($pidList) > 0 && isset($selector) && isset($currentSetup)) {
 			$table = $currentSetup['sqlMainTable'];
 			$mmTable = $currentSetup['sqlMMTable'];
@@ -86,7 +98,7 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 
 			$newsSelect = (t3lib_div::_GP('type') == 'news') ? ',' . $currentSetup['sqlTitle'] . ',' . $currentSetup['sqlKeywords'] : '';
 
-			$languageWhere = (is_int($GLOBALS['TSFE']->sys_language_uid) && !$currentSetup['disableLanguageCheck']) ? ' AND ' . $table . '.sys_language_uid=' . $GLOBALS['TSFE']->sys_language_uid : '';
+			$languageWhere = (is_int($currentSetup['languageUid'])) ? ' AND ' . $table . '.sys_language_uid=' . $currentSetup['languageUid'] : '';
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'uid,' . $currentSetup['sqlLastUpdated'] . $newsSelect,
 				$table . $sqlMMTable,
@@ -139,10 +151,11 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 	 * @return    string
 	 */
 	protected function getVariousItemUrl($showUid, $currentSetup) {
+		$languageParam = (is_int($currentSetup['languageUid'])) ? '&L=' . $currentSetup['languageUid'] : '';
 
 		$conf = array(
 			'parameter'        => $currentSetup['singlePid'],
-			'additionalParams' => '&' . $currentSetup['linkParams'] . '=' . $showUid,
+			'additionalParams' => '&' . $currentSetup['linkParams'] . '=' . $showUid . $languageParam,
 			'returnLast'       => 'url',
 			'useCacheHash'     => TRUE,
 		);
