@@ -58,34 +58,39 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 	 */
 	protected function generateSitemapContent() {
 
-		$selector           = trim(t3lib_div::_GP('selector'));
-		$pidList            = $this->pidList;
-		$catList            = (t3lib_div::_GP('catList')) ? t3lib_div::trimExplode(',', t3lib_div::_GP('catList')) : array();
-		$catMMList          = (t3lib_div::_GP('catMMList')) ? t3lib_div::trimExplode(',', t3lib_div::_GP('catMMList')) : array();
-		$typoscriptSelector = $selector . '.';
-
+		$selector = trim(t3lib_div::_GP('selector'));
 		t3lib_div::loadTCA($selector);
+		$typoscriptSelector = $selector . '.';
 		$currentSetup = $GLOBALS['TSFE']->tmpl->setup['plugin.']['dd_googlesitemap_dmf.'][$typoscriptSelector];
 
+
+		$pidList = ($currentSetup['pidList']) ? t3lib_div::intExplode(',', $currentSetup['pidList']) : $this->pidList;
+
+
+		$catList = (t3lib_div::_GP('catList')) ? t3lib_div::intExplode(',', t3lib_div::_GP('catList')) : t3lib_div::intExplode(',', $currentSetup['catList']);
+		$catMMList = (t3lib_div::_GP('catMMList')) ? t3lib_div::intExplode(',', t3lib_div::_GP('catMMList')) : t3lib_div::intExplode(',', $currentSetup['catMMList']);
+		$currentSetup['singlePid'] = (t3lib_div::_GP('singlePid')) ? intval(t3lib_div::_GP('singlePid')) : intval($currentSetup['singlePid']);
+
 		if (count($pidList) > 0 && isset($selector) && isset($currentSetup)) {
-			$table     = $currentSetup['sqlMainTable'];
-			$mmTable   = $currentSetup['sqlMMTable'];
+			$table = $currentSetup['sqlMainTable'];
+			$mmTable = $currentSetup['sqlMMTable'];
 			$catColumn = $currentSetup['sqlCatColumn'];
 
 			$sqlCondition = ($catColumn && count($catList) > 0) ? ' AND ' . $catColumn . ' IN (' . implode(',', $catList) . ')' : '';
 
 			$sqlMMCondition = $sqlMMTable = '';
 			if ($mmTable != '' && count($catMMList) > 0) {
-				$sqlMMTable     = ',' . $mmTable;
+				$sqlMMTable = ',' . $mmTable;
 				$sqlMMCondition = ' AND ' . $table . '.uid = ' . $mmTable . '.uid_local AND ' . $mmTable . '.uid_foreign IN (' . implode(',', $catMMList) . ')';
 			}
 
 			$newsSelect = (t3lib_div::_GP('type') == 'news') ? ',' . $currentSetup['sqlTitle'] . ',' . $currentSetup['sqlKeywords'] : '';
 
+			$languageWhere = (is_int($GLOBALS['TSFE']->sys_language_uid) && !$currentSetup['disableLanguageCheck']) ? ' AND ' . $table . '.sys_language_uid=' . $GLOBALS['TSFE']->sys_language_uid : '';
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'uid,' . $currentSetup['sqlLastUpdated'] . $newsSelect,
 				$table . $sqlMMTable,
-				'pid IN (' . implode(',', $pidList) . ')' . $sqlCondition . $sqlMMCondition . $this->cObj->enableFields($table),
+				'pid IN (' . implode(',', $pidList) . ')' . $sqlCondition . $sqlMMCondition . $this->cObj->enableFields($table) . $languageWhere,
 				'uid',
 				$currentSetup['sqlOrder'] ? $currentSetup['sqlOrder'] : ''
 			);
@@ -93,9 +98,8 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 			$rowCount = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 
 			while (FALSE !== ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-				if (($url = $this->getVariousItemUrl($row['uid'], $currentSetup['linkParams']))) {
+				if ($url = $this->getVariousItemUrl($row['uid'], $currentSetup)) {
 					$frequency = ($currentSetup['frequency']) ? $currentSetup['frequency'] : $this->getChangeFrequency($row[$currentSetup['sqlLastUpdated']]);
-					$title = $row[$currentSetup['sqlTitle']];
 					echo $this->renderer->renderEntry(
 						$url,
 						$row[$currentSetup['sqlTitle']],
@@ -134,11 +138,11 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 	 *
 	 * @return    string
 	 */
-	protected function getVariousItemUrl($showUid, $linkParams) {
+	protected function getVariousItemUrl($showUid, $currentSetup) {
 
 		$conf = array(
-			'parameter'        => intval(t3lib_div::_GP('singlePid')),
-			'additionalParams' => '&' . $linkParams . '=' . $showUid,
+			'parameter'        => $currentSetup['singlePid'],
+			'additionalParams' => '&' . $currentSetup['linkParams'] . '=' . $showUid,
 			'returnLast'       => 'url',
 			'useCacheHash'     => TRUE,
 		);
