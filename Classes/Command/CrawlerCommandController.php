@@ -20,8 +20,9 @@ class CrawlerCommandController extends CommandController {
 	 * @param bool $clearAllCaches
 	 * @param bool $clearStaticfilecache
 	 * @param string $url
+	 * @param string $domain
 	 */
-	public function crawlXmlCommand($clearAllCaches = FALSE, $clearStaticfilecache = FALSE, $url = '') {
+	public function crawlXmlCommand($clearAllCaches = FALSE, $clearStaticfilecache = FALSE, $url = '', $domain = '') {
 
 		/** @var ConfigurationManager $configurationManager */
 		$configurationManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
@@ -32,7 +33,7 @@ class CrawlerCommandController extends CommandController {
 		} else {
 			$xmlUrls = $settings['plugin.']['dd_googlesitemap_dmf.']['crawler.'];
 		}
-		if (!is_array($xmlUrls)) {
+		if (!is_array($xmlUrls) || $domain === '') {
 			return;
 		}
 
@@ -54,7 +55,7 @@ class CrawlerCommandController extends CommandController {
 
 
 		// clear all caches
-		if ($clearAllCaches) {
+		if ($clearAllCaches !== FALSE) {
 			// clears all cache tables
 			$this->clearAllCaches();
 
@@ -64,7 +65,12 @@ class CrawlerCommandController extends CommandController {
 		}
 
 		foreach ($xmlUrls as $httpUrl) {
-
+			$output = 'cd ' . $pathToLogFile . ' && ';
+			$output .= 'wget -q ' . $httpUrl . ' --output-document - | ';
+			$output .= 'egrep -o "' . $domain . '[^<]+" | ';
+			$output .= 'wget -q --delete-after -d -w 1 -o ' . $pathToLogFile . 'wgetLog.txt -i -';
+			exec("$output");
+			/*
 			$contentXml = $this->get_url_contents($httpUrl);
 
 			$generatedArrayOfXml = GeneralUtility::xml2tree($contentXml);
@@ -77,6 +83,7 @@ class CrawlerCommandController extends CommandController {
 					exec("$wgetString");
 				}
 			}
+			*/
 		}
 	}
 
