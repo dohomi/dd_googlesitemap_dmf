@@ -18,9 +18,10 @@ class CrawlerCommandController extends CommandController {
 	 * the whole website links found in it.
 	 *
 	 * @param bool $clearAllCaches
-	 * @param string $level
+	 * @param bool $clearStaticfilecache
+	 * @param string $url
 	 */
-	public function crawlXmlCommand($clearAllCaches = FALSE, $url = '') {
+	public function crawlXmlCommand($clearAllCaches = FALSE, $clearStaticfilecache = FALSE, $url = '') {
 
 		/** @var ConfigurationManager $configurationManager */
 		$configurationManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
@@ -46,7 +47,7 @@ class CrawlerCommandController extends CommandController {
 		$removeWgetFile = 'rm ' . $pathToLogFile . 'wgetLog.txt';
 		exec("$removeWgetFile");
 
-		if (is_dir(PATH_site . 'typo3temp/tx_staticfilecache') && $clearAllCaches === FALSE) {
+		if (is_dir(PATH_site . 'typo3temp/tx_staticfilecache') && $clearAllCaches === FALSE && $clearStaticfilecache !== FALSE) {
 			$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/tx_staticfilecache/*';
 			exec("$clearTypo3Temp");
 		}
