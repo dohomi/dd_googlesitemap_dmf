@@ -18,15 +18,19 @@ class CrawlerCommandController extends CommandController {
 	 * the whole website links found in it.
 	 *
 	 * @param bool $clearAllCaches
-	 * @param int $level
+	 * @param string $level
 	 */
-	public function crawlXmlCommand($clearAllCaches = FALSE, $level = 2) {
+	public function crawlXmlCommand($clearAllCaches = FALSE, $url = '') {
 
 		/** @var ConfigurationManager $configurationManager */
 		$configurationManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 
-		$xmlUrls = $settings['plugin.']['dd_googlesitemap_dmf.']['crawler.'];
+		if ($url) {
+			$xmlUrls[] = $url;
+		} else {
+			$xmlUrls = $settings['plugin.']['dd_googlesitemap_dmf.']['crawler.'];
+		}
 		if (!is_array($xmlUrls)) {
 			return;
 		}
