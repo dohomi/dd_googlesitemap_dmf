@@ -88,10 +88,10 @@ class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
 			$mmTable = $currentSetup['sqlMMTable'];
 			$catColumn = $currentSetup['sqlCatColumn'];
 
-			$sqlCondition = ($catColumn && count($catList) > 0) ? ' AND ' . $catColumn . ' IN (' . implode(',', $catList) . ')' : '';
+			$sqlCondition = ($catColumn && count($catList) > 0 && $catList[0] > 0) ? ' AND ' . $catColumn . ' IN (' . implode(',', $catList) . ')' : '';
 
 			$sqlMMCondition = $sqlMMTable = '';
-			if ($mmTable != '' && count($catMMList) > 0) {
+			if ($mmTable != '' && count($catMMList) > 0 && $catMMList[0] > 0) {
 				$sqlMMTable = ',' . $mmTable;
 				$sqlMMCondition = ' AND ' . $table . '.uid = ' . $mmTable . '.uid_local AND ' . $mmTable . '.uid_foreign IN (' . implode(',', $catMMList) . ')';
 			}

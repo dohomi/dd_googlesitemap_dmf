@@ -17,16 +17,37 @@ class CrawlerCommandController extends CommandController {
 	 * This function crawls generated Sitemap.xml from dd_googlesitemap and re-crawles
 	 * the whole website links found in it.
 	 *
-	 * @param bool $clearAllCaches
-	 * @param bool $clearStaticfilecache
-	 * @param string $url
-	 * @param string $domain
+	 * @param bool $clearAllCaches deletes all typo3temp files and clearAllCaches call
+	 * @param bool $clearStaticfilecache deletes all files from typo3temp/tx_staticfilecache
+	 * @param string $url dd_googlesitemap call like http://www.domain.com/?eID=dd_googlesitemap
+	 * @param string $domain full domain address like http://www.domain.com
+	 * @param bool $enableWgetCrawl ALPHA / BETA
 	 */
-	public function crawlXmlCommand($clearAllCaches = FALSE, $clearStaticfilecache = FALSE, $url = '', $domain = '') {
+	public function crawlXmlCommand($clearAllCaches = FALSE, $clearStaticfilecache = FALSE, $url = '', $domain = '', $enableWgetCrawl = FALSE) {
 
 		/** @var ConfigurationManager $configurationManager */
 		$configurationManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+
+
+		if (is_dir(PATH_site . 'typo3temp/tx_staticfilecache') && $clearAllCaches === FALSE && $clearStaticfilecache !== FALSE) {
+			$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/tx_staticfilecache/*';
+			exec("$clearTypo3Temp");
+		}
+
+		// clear all caches
+		if ($clearAllCaches !== FALSE) {
+			// clears all cache tables
+			$this->clearAllCaches();
+
+			// remove all temp files
+			$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/*';
+			exec("$clearTypo3Temp");
+		}
+
+		if ($enableWgetCrawl === FALSE) {
+			return;
+		}
 
 		if ($url) {
 			$xmlUrls[] = $url;
@@ -48,42 +69,11 @@ class CrawlerCommandController extends CommandController {
 		$removeWgetFile = 'rm ' . $pathToLogFile . 'wgetLog.txt';
 		exec("$removeWgetFile");
 
-		if (is_dir(PATH_site . 'typo3temp/tx_staticfilecache') && $clearAllCaches === FALSE && $clearStaticfilecache !== FALSE) {
-			$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/tx_staticfilecache/*';
-			exec("$clearTypo3Temp");
-		}
-
-
-		// clear all caches
-		if ($clearAllCaches !== FALSE) {
-			// clears all cache tables
-			$this->clearAllCaches();
-
-			// remove all temp files
-			$clearTypo3Temp = 'rm -rf ' . PATH_site . 'typo3temp/*';
-			exec("$clearTypo3Temp");
-		}
-
 		foreach ($xmlUrls as $httpUrl) {
-			$output = 'cd ' . $pathToLogFile . ' && ';
-			$output .= 'wget -q ' . $httpUrl . ' --output-document - | ';
+			$output = 'wget -q "' . $httpUrl . '" --output-document - | ';
 			$output .= 'egrep -o "' . $domain . '[^<]+" | ';
-			$output .= 'wget -q --delete-after -d -w 1 -o ' . $pathToLogFile . 'wgetLog.txt -i -';
+			$output .= 'wget --delete-after -w 1 -o ' . $pathToLogFile . 'wgetXml.log -i -';
 			exec("$output");
-			/*
-			$contentXml = $this->get_url_contents($httpUrl);
-
-			$generatedArrayOfXml = GeneralUtility::xml2tree($contentXml);
-			if ($urls = $generatedArrayOfXml['urlset'][0]['ch']['url']) {
-				foreach ($urls as $url) {
-
-					// wget all sitemap urls
-					$http = $url['ch']['loc'][0]['values'][0];
-					$wgetString = 'cd ' . $pathToLogFile . ' && wget --no-cache --delete-after -a ' . $pathToLogFile . 'wgetLog.txt ' . $http;
-					exec("$wgetString");
-				}
-			}
-			*/
 		}
 	}
 
