@@ -40,7 +40,7 @@
  * @package       TYPO3
  * @subpackage    tx_ddgooglesitemap_dmf
  */
-class tx_ddgooglesitemap_dmf extends tx_ddgooglesitemap_ttnews {
+class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtNewsSitemapGenerator {
 
 	/**
 	 * Creates an instance of this class
