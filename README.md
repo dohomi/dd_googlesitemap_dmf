@@ -11,6 +11,10 @@ Manual
 ----------
 Please read the manual inside of doc/manual.sxw where you find all information about installation and configuration.
 
+Important
+---------
+Version 1.2.3 is only working with TYPO3 6.2 and dd_googlesitemap >= 2.x
+
 Contact
 -------
 E-mail: djgarms@gmail.com
