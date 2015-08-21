@@ -13,7 +13,7 @@ Please read the manual inside of doc/manual.sxw where you find all information a
 
 Important
 ---------
-Version 1.2.3 is only working with TYPO3 6.2 and dd_googlesitemap >= 2.x
+Version 1.2.3 is only working with TYPO3 >= 6.2 and dd_googlesitemap >= 2.x
 
 Contact
 -------
