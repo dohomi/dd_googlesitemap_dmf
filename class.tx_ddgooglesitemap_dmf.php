@@ -99,8 +99,13 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 			$newsSelect = (t3lib_div::_GP('type') == 'news') ? ',' . $currentSetup['sqlTitle'] . ',' . $currentSetup['sqlKeywords'] : '';
 
 			$languageWhere = (is_int($currentSetup['languageUid'])) ? ' AND ' . $table . '.sys_language_uid=' . $currentSetup['languageUid'] : '';
-			$noInternalURLwhere = (' AND (' . $table . '.internalurl=FALSE OR ' . $table . ' .internalurl IS NULL)');
-			$noExternalURLwhere = (' AND (' . $table . '.externalurl=FALSE  OR ' . $table . ' .externalurl IS NULL)');
+			if ($table=='tx_news_domain_model_news') {
+                                $noInternalURLwhere = (' AND (' . $table . '.internalurl=FALSE OR ' . $table . ' .internalurl IS NULL)');
+                                $noExternalURLwhere = (' AND (' . $table . '.externalurl=FALSE  OR ' . $table . ' .externalurl IS NULL)');
+                        } else {
+                                $noInternalURLwhere = '';
+                                $noExternalURLwhere = '';
+                        }
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'uid,' . $currentSetup['sqlLastUpdated'] . $newsSelect,
 				$table . $sqlMMTable,
