@@ -37,6 +37,7 @@
  *
  * @author        Dmitry Dulepov <dmitry@typo3.org>
  * @author        Dominic Garms <djgarms@gmail.com>
+ * @author		  Maximilian Grimm <grimm@grimmcreative.com>
  * @package       TYPO3
  * @subpackage    tx_ddgooglesitemap_dmf
  */
@@ -58,18 +59,17 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 	 */
 	protected function generateSitemapContent() {
 
-		$selector = trim(t3lib_div::_GP('selector'));
-		t3lib_div::loadTCA($selector);
+		$selector = trim(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('selector'));
 		$typoscriptSelector = $selector . '.';
 		$currentSetup = $GLOBALS['TSFE']->tmpl->setup['plugin.']['dd_googlesitemap_dmf.'][$typoscriptSelector];
 
 
-		$pidList = ($currentSetup['pidList']) ? t3lib_div::intExplode(',', $currentSetup['pidList']) : $this->pidList;
+		$pidList = ($currentSetup['pidList']) ? \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $currentSetup['pidList']) : $this->pidList;
 
 
-		$catList = (t3lib_div::_GP('catList')) ? t3lib_div::intExplode(',', t3lib_div::_GP('catList')) : t3lib_div::intExplode(',', $currentSetup['catList']);
-		$catMMList = (t3lib_div::_GP('catMMList')) ? t3lib_div::intExplode(',', t3lib_div::_GP('catMMList')) : t3lib_div::intExplode(',', $currentSetup['catMMList']);
-		$currentSetup['singlePid'] = (t3lib_div::_GP('singlePid')) ? intval(t3lib_div::_GP('singlePid')) : intval($currentSetup['singlePid']);
+		$catList = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('catList')) ? \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('catList')) : \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $currentSetup['catList']);
+		$catMMList = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('catMMList')) ? \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('catMMList')) : \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $currentSetup['catMMList']);
+		$currentSetup['singlePid'] = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('singlePid')) ? intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('singlePid')) : intval($currentSetup['singlePid']);
 
 		$currentSetup['languageUid'] = '';
 		if (!$currentSetup['disableLanguageCheck']) {
@@ -77,9 +77,9 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 				// set language through TSFE checkup
 				$currentSetup['languageUid'] = intval($GLOBALS['TSFE']->sys_language_uid);
 			}
-			if (t3lib_div::_GP('L')) {
+			if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('L')) {
 				// overwrites if L param is set
-				$currentSetup['languageUid'] = intval(t3lib_div::_GP('L'));
+				$currentSetup['languageUid'] = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('L'));
 			}
 		}
 
@@ -96,7 +96,7 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 				$sqlMMCondition = ' AND ' . $table . '.uid = ' . $mmTable . '.uid_local AND ' . $mmTable . '.uid_foreign IN (' . implode(',', $catMMList) . ')';
 			}
 
-			$newsSelect = (t3lib_div::_GP('type') == 'news') ? ',' . $currentSetup['sqlTitle'] . ',' . $currentSetup['sqlKeywords'] : '';
+			$newsSelect = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('type') == 'news') ? ',' . $currentSetup['sqlTitle'] . ',' . $currentSetup['sqlKeywords'] : '';
 
 			$languageWhere = (is_int($currentSetup['languageUid'])) ? ' AND ' . $table . '.sys_language_uid=' . $currentSetup['languageUid'] : '';
 			if ($table=='tx_news_domain_model_news') {
@@ -168,7 +168,7 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 		);
 		$link = htmlspecialchars($this->cObj->typoLink('', $conf));
 
-		return t3lib_div::locationHeaderUrl($link);
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($link);
 	}
 
 
