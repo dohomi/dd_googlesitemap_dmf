@@ -162,7 +162,7 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 
 		$conf = array(
 			'parameter'        => $currentSetup['singlePid'],
-			'additionalParams' => '&' . $currentSetup['linkParams'] . '=' . $showUid . $languageParam,
+			'additionalParams' => '&' . $currentSetup['linkParams'] . '=' . $showUid . $languageParam . $currentSetup['additionalParams'],
 			'returnLast'       => 'url',
 			'useCacheHash'     => TRUE,
 		);
