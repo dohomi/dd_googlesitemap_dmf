@@ -29,27 +29,33 @@ plugin.dd_googlesitemap_dmf {
 		# typolink additionalParam (must belong to the uid of the sqlMainTable)
 		linkParams = tx_news_pi1[news]
 
+		# typolink additionalParams
+		# Can be used to specify controller and action. This must be code ready to insert after the last parameter.
+		# For example use this:
+		# additionalParams = &tx_news_pi1[controller]=News&tx_news_pi1[action]=detail
+		additionalParams =
+
 		# csv Pid's of the stored elements. Rootline is not checked with this setting
-        pidList = 1,2,3
+		pidList = 1,2,3
 
-        # detail page id where the link should point at
-        singlePid = 15
+		# detail page id where the link should point at
+		singlePid = 15
 
-        # filter by category which is inside of the main table -> sqlCatColumn
-        catList =
+		# filter by category which is inside of the main table -> sqlCatColumn
+		catList =
 
-        # csv filter by mm related table -> sqlMMTable
-        catMMList =
+		# csv filter by mm related table -> sqlMMTable
+		catMMList =
 
-        # disable the language check through GLOBALS['TSFE']->sys_language_uid
-        disableLanguageCheck = 0
+		# disable the language check through GLOBALS['TSFE']->sys_language_uid
+		disableLanguageCheck = 0
 	}
 
-    # sitemap eID urls for the crawler
+	# sitemap eID urls for the crawler
 	crawler {
-	    1 = http://beispiel.de?eID=dd_googlesitemap
+		1 = http://beispiel.de?eID=dd_googlesitemap
 
-	    # more than one sitemap
-	    # 2 =  http://beispiel.de?eID=dd_googlesitemap&more-configuration
+		# more than one sitemap
+		# 2 =  http://beispiel.de?eID=dd_googlesitemap&more-configuration
 	}
 }
