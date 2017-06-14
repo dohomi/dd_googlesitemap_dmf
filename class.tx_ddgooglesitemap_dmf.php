@@ -88,7 +88,8 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 			$mmTable = $currentSetup['sqlMMTable'];
 			$catColumn = $currentSetup['sqlCatColumn'];
 
-			$sqlCondition = ($catColumn && count($catList) > 0 && $catList[0] > 0) ? ' AND ' . $catColumn . ' IN (' . implode(',', $catList) . ')' : '';
+			$sqlCondition = (empty($currentSetup['sqlWhere']) ? '' : ' AND ' . $currentSetup['sqlWhere']) .
+				(($catColumn && count($catList) > 0 && $catList[0] > 0) ? ' AND ' . $catColumn . ' IN (' . implode(',', $catList) . ')' : '');
 
 			$sqlMMCondition = $sqlMMTable = '';
 			if ($mmTable != '' && count($catMMList) > 0 && $catMMList[0] > 0) {
