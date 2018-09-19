@@ -1,0 +1,25 @@
+{
+    "name": "tentacular/dd_googlesitemap_dmf",
+    "type": "typo3-cms-extension",
+    "version": "3.0.0",
+    "description": "Google Sitemap for plugins\n\nExtends dd_googlesitemap that you can easy create your own sitemap.xml for you extensions. Needs only a few line of typoscript configuration - works with realurl or cooluri.",
+    "authors": [
+        {
+            "name": "Dominic Garms",
+            "role": "Product Owner"
+        }
+    ],
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": ">=6.2 || ^8.7",
+        "dd_googlesitemap": "^2"
+    },
+    "replace": {
+        "dd_googlesitemap_dmf": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "DMF\\DdGooglesitemapDmf\\": "Classes/"
+        }
+    }
+}
