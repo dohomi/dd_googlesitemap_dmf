@@ -97,7 +97,6 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 				
 				if( $mmTable == 'sys_category_record_mm' ){
 				    $sqlMMCondition = 'AND ' . $mmTable . '.tablenames  = "' . $table . '" AND ' . $mmTable . '.fieldname  = "' . $catColumn . '" AND ' . $table . '.uid = ' . $mmTable . '.uid_foreign AND ' . $mmTable . '.uid_local IN (' . implode(',', $catMMList) . ')';
-				    print $sqlMMCondition;
 				}
 			}
 
