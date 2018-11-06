@@ -94,6 +94,10 @@ class tx_ddgooglesitemap_dmf extends DmitryDulepov\DdGooglesitemap\Generator\TtN
 			if ($mmTable != '' && count($catMMList) > 0 && $catMMList[0] > 0) {
 				$sqlMMTable = ',' . $mmTable;
 				$sqlMMCondition = ' AND ' . $table . '.uid = ' . $mmTable . '.uid_local AND ' . $mmTable . '.uid_foreign IN (' . implode(',', $catMMList) . ')';
+				
+				if( $mmTable == 'sys_category_record_mm' ){
+				    $sqlMMCondition = 'AND ' . $mmTable . '.tablenames  = "' . $table . '" AND ' . $mmTable . '.fieldname  = "' . $catColumn . '" AND ' . $table . '.uid = ' . $mmTable . '.uid_foreign AND ' . $mmTable . '.uid_local IN (' . implode(',', $catMMList) . ')';
+				}
 			}
 
 			$newsSelect = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('type') == 'news') ? ',' . $currentSetup['sqlTitle'] . ',' . $currentSetup['sqlKeywords'] : '';
